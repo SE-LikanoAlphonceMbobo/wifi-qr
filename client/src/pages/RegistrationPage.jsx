@@ -244,7 +244,7 @@ export default function RegistrationPage() {
         textAlign: 'right', px: 3, py: 2, zIndex: 2,
         color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem'
       }}>
-        Made by Atoms
+        Powered-by T-Connect-IT
       </Typography>
     </Box>
   );

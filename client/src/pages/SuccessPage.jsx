@@ -202,7 +202,7 @@ export default function SuccessPage() {
       </Fade>
 
       <Typography sx={{ position: 'fixed', bottom: 16, right: 20, color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem', zIndex: 2 }}>
-        Made by Atoms
+        Powered-by T-Connect-IT
       </Typography>
 
       <Snackbar open={toastOpen} autoHideDuration={2000} onClose={() => setToastOpen(false)}
