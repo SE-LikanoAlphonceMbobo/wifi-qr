@@ -1,0 +1,141 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
+import Fade from '@mui/material/Fade';
+import WifiIcon from '@mui/icons-material/Wifi';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import TConnectLogo from '../components/TConnectLogo';
+
+export default function LandingPage() {
+  const [vis, setVis] = React.useState(false);
+  const navigate = useNavigate();
+
+  React.useEffect(() => { setTimeout(() => setVis(true), 200); }, []);
+
+  return (
+    <Box sx={{
+      minHeight: '100dvh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      px: 3,
+      py: 6,
+      overflow: 'hidden',
+      backgroundImage: 'url(/background.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      bgcolor: '#000000'
+    }}>
+      
+      <Box sx={{
+        position: 'absolute', inset: 0,
+        bgcolor: 'rgba(0,0,0,0.4)',
+        zIndex: 0
+      }} />
+
+      <Box sx={{
+        position: 'absolute',
+        top: '25%', left: '50%', transform: 'translateX(-50%)',
+        width: 300, height: 300, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,81,0,0.10) 0%, transparent 65%)',
+        filter: 'blur(60px)', zIndex: 1
+      }} />
+
+      <Fade in={vis} timeout={1000}>
+        <Box sx={{
+          textAlign: 'center', zIndex: 2, maxWidth: 400, width: '100%',
+          display: 'flex', flexDirection: 'column', alignItems: 'center'
+        }}>
+          {/* Brand Header */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+            <TConnectLogo size={36} />
+            <Typography sx={{
+              fontWeight: 800, letterSpacing: '0.08em',
+              color: '#FFFFFF', fontSize: '1.4rem', lineHeight: 1
+            }}>
+              T-CONNECT
+            </Typography>
+          </Box>
+
+          <Typography sx={{
+            color: '#FF5100', fontWeight: 600, fontSize: '0.6rem',
+            letterSpacing: 2.5, textTransform: 'uppercase', mb: 5, lineHeight: 1
+          }}>
+            Starlink Authorized Reseller
+          </Typography>
+
+          {/* WiFi Icon with pulse rings */}
+          <Box sx={{
+            position: 'relative', display: 'inline-flex',
+            alignItems: 'center', justifyContent: 'center',
+            mb: 5, width: 140, height: 140
+          }}>
+            {[1, 2, 3].map(i => (
+              <Box key={i} sx={{
+                position: 'absolute',
+                width: 64 + i * 28, height: 64 + i * 28,
+                borderRadius: '50%', border: '1px solid',
+                borderColor: `rgba(255,81,0,${0.15 / i})`,
+                animation: `pulseRing ${2.0 + i * 0.4}s ease-in-out infinite`,
+                animationDelay: `${i * 0.3}s`
+              }} />
+            ))}
+            <Avatar sx={{
+              width: 72, height: 72,
+              bgcolor: 'rgba(255,81,0,0.10)',
+              border: '1.5px solid rgba(255,81,0,0.20)'
+            }}>
+              <WifiIcon sx={{ fontSize: 38, color: '#FF5100' }} />
+            </Avatar>
+          </Box>
+
+          <Typography sx={{
+            color: '#FFFFFF', fontSize: { xs: '1.6rem', sm: '2rem' },
+            fontWeight: 700, lineHeight: 1.2, mb: 1.5
+          }}>
+            Connect to Free WiFi
+          </Typography>
+
+          <Typography sx={{
+            maxWidth: 300, mx: 'auto', lineHeight: 1.6,
+            color: 'rgba(255,255,255,0.60)', fontSize: '0.88rem', mb: 5
+          }}>
+            Get high-speed internet access powered by Starlink satellite technology
+          </Typography>
+
+          <Button variant="contained" size="large"
+            onClick={() => navigate('/register')}
+            endIcon={<ArrowForwardIcon />}
+            sx={{
+              width: '100%', py: 1.8, fontSize: '1rem', fontWeight: 600,
+              borderRadius: 3, background: '#FF5100', color: '#FFFFFF',
+              boxShadow: '0 4px 20px rgba(255,81,0,0.30)',
+              '&:hover': { background: '#FF6A2A' }
+            }}>
+            Get Connected
+          </Button>
+
+          <Typography sx={{
+            mt: 3, color: 'rgba(255,255,255,0.25)',
+            fontSize: '0.68rem', lineHeight: 1.5
+          }}>
+            By connecting you agree to our Terms of Service and Acceptable Use Policy
+          </Typography>
+        </Box>
+      </Fade>
+
+      <Typography sx={{
+        position: 'fixed', bottom: 16, right: 20,
+        color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem', zIndex: 2
+      }}>
+        Made by Atoms
+      </Typography>
+    </Box>
+  );
+}

@@ -2,15 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { createVisitor } = require('./model');
 
-/**
- * POST /api/register
- * Register a new visitor for WiFi access
- */
 router.post('/register', async (req, res) => {
   try {
     const { fullName, business, phone, email, areaOfOperation, useCase } = req.body;
 
-    // Server-side validation matching the UI requirements
     if (!fullName || fullName.trim() === '') {
       return res.status(400).json({ success: false, error: 'Full name is required' });
     }
@@ -18,34 +13,47 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Phone number is required' });
     }
 
+    // Split full name into first and last name
+    const nameParts = fullName.trim().split(/\s+/);
+    const firstName = nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
     const visitor = await createVisitor({
-      fullName: fullName.trim(),
+      firstName,
+      lastName,
       business: business ? business.trim() : null,
       phone: phone.trim(),
       email: email ? email.trim() : null,
-      areaOfOperation: areaOfOperation || null,
+      area: areaOfOperation || null,
       useCase: useCase || 'home'
     });
 
-    res.status(201).json({ 
-      success: true, 
+    res.status(201).json({
+      success: true,
       message: 'Device registered successfully',
-      data: visitor 
+      data: {
+        id: visitor.id,
+        fullName: `${visitor.first_name} ${visitor.last_name}`.trim(),
+        business: visitor.business,
+        useCase: visitor.use_case,
+        connectedAt: visitor.connected_at
+      }
     });
 
   } catch (error) {
-    console.error('Registration Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal server error during registration' 
+    console.error('===== REGISTRATION ERROR =====');
+    console.error('Message:', error.message);
+    console.error('Detail:', error.detail);
+    console.error('Code:', error.code);
+    console.error('==============================');
+    res.status(500).json({
+      success: false,
+      error: 'Registration failed. Please try again.',
+      debug: error.message
     });
   }
 });
 
-/**
- * GET /api/config
- * Fetch WiFi network configuration for the frontend
- */
 router.get('/config', (req, res) => {
   res.json({
     success: true,
