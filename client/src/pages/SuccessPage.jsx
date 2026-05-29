@@ -32,7 +32,7 @@ export default function SuccessPage() {
   React.useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch('/api/config');
+        const res = await fetch('https://t-connect-wifi-qr-server.vercel.app/api/config');
         const data = await res.json();
         if (data.success) {
           setWifiConfig(data.data);
