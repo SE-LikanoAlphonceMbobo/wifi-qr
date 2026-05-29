@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { createVisitor } = require('./model');
 
+// Log WiFi config on startup to verify .env is loaded
+console.log('===== WIFI CONFIG LOADED =====');
+console.log('SSID:', process.env.WIFI_SSID);
+console.log('Security:', process.env.WIFI_SECURITY);
+console.log('==============================');
+
 router.post('/register', async (req, res) => {
   try {
     const { fullName, business, phone, email, areaOfOperation, useCase } = req.body;
@@ -13,7 +19,6 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Phone number is required' });
     }
 
-    // Split full name into first and last name
     const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
@@ -54,12 +59,14 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// WiFi config endpoint — reads directly from .env, ZERO hardcoding
 router.get('/config', (req, res) => {
   res.json({
     success: true,
     data: {
-      ssid: process.env.WIFI_SSID || 'T-Connect WiFi',
-      security: process.env.WIFI_SECURITY || 'WPA3'
+      ssid: process.env.WIFI_SSID,
+      password: process.env.WIFI_PASSWORD,
+      security: process.env.WIFI_SECURITY
     }
   });
 });

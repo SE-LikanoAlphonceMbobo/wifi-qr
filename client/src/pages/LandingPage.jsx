@@ -8,6 +8,7 @@ import Fade from '@mui/material/Fade';
 import WifiIcon from '@mui/icons-material/Wifi';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import TConnectLogo from '../components/TConnectLogo';
+import AppBackground from '../components/AppBackground';
 
 export default function LandingPage() {
   const [vis, setVis] = React.useState(false);
@@ -26,24 +27,17 @@ export default function LandingPage() {
       px: 3,
       py: 6,
       overflow: 'hidden',
-      backgroundImage: 'url(/background.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      bgcolor: '#000000'
+      bgcolor: '#000000' // Fallback
     }}>
       
-      <Box sx={{
-        position: 'absolute', inset: 0,
-        bgcolor: 'rgba(0,0,0,0.4)',
-        zIndex: 0
-      }} />
+      <AppBackground />
 
+      {/* Orange glow */}
       <Box sx={{
         position: 'absolute',
         top: '25%', left: '50%', transform: 'translateX(-50%)',
         width: 300, height: 300, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,81,0,0.10) 0%, transparent 65%)',
+        background: 'radial-gradient(circle, rgba(255,81,0,0.15) 0%, transparent 65%)',
         filter: 'blur(60px)', zIndex: 1
       }} />
 
@@ -54,13 +48,14 @@ export default function LandingPage() {
         }}>
           {/* Brand Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-            <TConnectLogo size={36} />
+            
             <Typography sx={{
               fontWeight: 800, letterSpacing: '0.08em',
               color: '#FFFFFF', fontSize: '1.4rem', lineHeight: 1
             }}>
               T-CONNECT
             </Typography>
+            <TConnectLogo size={36} />
           </Box>
 
           <Typography sx={{
@@ -81,15 +76,15 @@ export default function LandingPage() {
                 position: 'absolute',
                 width: 64 + i * 28, height: 64 + i * 28,
                 borderRadius: '50%', border: '1px solid',
-                borderColor: `rgba(255,81,0,${0.15 / i})`,
+                borderColor: `rgba(255,81,0,${0.2 / i})`,
                 animation: `pulseRing ${2.0 + i * 0.4}s ease-in-out infinite`,
                 animationDelay: `${i * 0.3}s`
               }} />
             ))}
             <Avatar sx={{
               width: 72, height: 72,
-              bgcolor: 'rgba(255,81,0,0.10)',
-              border: '1.5px solid rgba(255,81,0,0.20)'
+              bgcolor: 'rgba(255,81,0,0.15)',
+              border: '1.5px solid rgba(255,81,0,0.30)'
             }}>
               <WifiIcon sx={{ fontSize: 38, color: '#FF5100' }} />
             </Avatar>
@@ -104,7 +99,7 @@ export default function LandingPage() {
 
           <Typography sx={{
             maxWidth: 300, mx: 'auto', lineHeight: 1.6,
-            color: 'rgba(255,255,255,0.60)', fontSize: '0.88rem', mb: 5
+            color: 'rgba(255,255,255,0.70)', fontSize: '0.88rem', mb: 5
           }}>
             Get high-speed internet access powered by Starlink satellite technology
           </Typography>
@@ -122,7 +117,7 @@ export default function LandingPage() {
           </Button>
 
           <Typography sx={{
-            mt: 3, color: 'rgba(255,255,255,0.25)',
+            mt: 3, color: 'rgba(255,255,255,0.35)',
             fontSize: '0.68rem', lineHeight: 1.5
           }}>
             By connecting you agree to our Terms of Service and Acceptable Use Policy

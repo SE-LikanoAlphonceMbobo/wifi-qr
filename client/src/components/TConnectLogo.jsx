@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import logo from './TConnect2.jpg'; // Vite automatically handles image imports from src
+import logo from './TConnect2.png'; // Vite automatically handles image imports from src
 
 export default function TConnectLogo({ size = 40 }) {
   return (

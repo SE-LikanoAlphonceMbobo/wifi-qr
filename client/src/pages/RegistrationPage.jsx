@@ -10,6 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Paper from '@mui/material/Paper';
 import Fade from '@mui/material/Fade';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -23,6 +24,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import WifiIcon from '@mui/icons-material/Wifi';
+import AppBackground from '../components/AppBackground';
 
 const AREAS = [
   'Maseru', 'Butha-Buthe', 'Leribe', 'Berea',
@@ -33,18 +35,18 @@ const AREAS = [
 const inputSx = {
   '& .MuiOutlinedInput-root': {
     borderRadius: 2,
-    bgcolor: 'rgba(255,255,255,0.04)',
-    '& fieldset': { borderColor: 'rgba(255,255,255,0.08)' },
-    '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.15)' },
+    bgcolor: 'rgba(255,255,255,0.06)',
+    '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+    '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
     '&.Mui-focused fieldset': { borderColor: '#FF5100', borderWidth: 2 }
   },
   '& .MuiInputBase-input': { color: '#FFFFFF' },
-  '& .MuiInputBase-input::placeholder': { color: '#555', opacity: 1 }
+  '& .MuiInputBase-input::placeholder': { color: '#666', opacity: 1 }
 };
 
 const adornment = (IconComp) => (
   <InputAdornment position="start">
-    <IconComp sx={{ fontSize: 20, color: '#555' }} />
+    <IconComp sx={{ fontSize: 20, color: '#888' }} />
   </InputAdornment>
 );
 
@@ -96,36 +98,39 @@ export default function RegistrationPage() {
   };
 
   const labelSx = {
-    color: '#999999', fontWeight: 500,
+    color: '#BBBBBB', fontWeight: 500,
     fontSize: '0.78rem', mb: 1, lineHeight: 1
   };
 
   return (
     <Box sx={{
       minHeight: '100dvh', display: 'flex', flexDirection: 'column',
-      bgcolor: '#000000', position: 'relative'
+      position: 'relative', bgcolor: '#000000'
     }}>
-      <Box sx={{
-        position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)',
-        width: 300, height: 180, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,81,0,0.04) 0%, transparent 70%)',
-        filter: 'blur(40px)', zIndex: 0
-      }} />
+      
+      <AppBackground />
 
       {/* Header */}
-      <Box sx={{ px: 2, py: 2, display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <IconButton onClick={() => navigate('/')} sx={{ color: '#FFFFFF' }}>
+      <Box sx={{ px: 2, py: 2, display: 'flex', alignItems: 'center', zIndex: 2 }}>
+        <IconButton onClick={() => navigate('/')} sx={{ color: '#FFFFFF', bgcolor: 'rgba(0,0,0,0.3)' }}>
           <ArrowBackIcon />
         </IconButton>
       </Box>
 
-      <Container maxWidth="sm" sx={{ py: 0, zIndex: 1, flex: 1, px: 3 }}>
+      <Container maxWidth="sm" sx={{ py: 0, zIndex: 2, flex: 1, px: 3, pb: 4 }}>
         <Fade in={vis} timeout={700}>
-          <Box>
+          {/* Frosted Glass Card Container */}
+          <Paper elevation={0} sx={{
+            p: 4, 
+            borderRadius: 4,
+            bgcolor: 'rgba(0, 0, 0, 0.60)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
+          }}>
             <Typography sx={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.5rem', mb: 0.5, lineHeight: 1.3 }}>
               Quick Registration
             </Typography>
-            <Typography sx={{ color: '#888888', fontSize: '0.85rem', mb: 4, lineHeight: 1.4 }}>
+            <Typography sx={{ color: '#AAAAAA', fontSize: '0.85rem', mb: 4, lineHeight: 1.4 }}>
               Fill in your details to get connected
             </Typography>
 
@@ -181,12 +186,12 @@ export default function RegistrationPage() {
                   startAdornment={adornment(LocationOnIcon)}
                   sx={{
                     borderRadius: 2,
-                    bgcolor: 'rgba(255,255,255,0.04)',
-                    color: form.areaOfOperation ? '#FFFFFF' : '#555',
-                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.08)' },
-                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.15)' },
+                    bgcolor: 'rgba(255,255,255,0.06)',
+                    color: form.areaOfOperation ? '#FFFFFF' : '#666',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF5100', borderWidth: 2 },
-                    '& .MuiSelect-icon': { color: '#555' }
+                    '& .MuiSelect-icon': { color: '#888' }
                   }}>
                   <MenuItem value="" disabled>Select your area</MenuItem>
                   {AREAS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
@@ -201,12 +206,12 @@ export default function RegistrationPage() {
                 onChange={(_, v) => v && setForm(p => ({ ...p, useCase: v }))}
                 fullWidth sx={{
                   '& .MuiToggleButton-root': {
-                    py: 1.4, borderColor: 'rgba(255,255,255,0.08)', color: '#666',
+                    py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888',
                     textTransform: 'none', fontWeight: 500, borderRadius: 2,
                     '&.Mui-selected': {
-                      bgcolor: 'rgba(255,81,0,0.10)', color: '#FF5100',
-                      borderColor: 'rgba(255,81,0,0.30)',
-                      '&:hover': { bgcolor: 'rgba(255,81,0,0.16)' }
+                      bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100',
+                      borderColor: 'rgba(255,81,0,0.40)',
+                      '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' }
                     }
                   }
                 }}>
@@ -231,13 +236,13 @@ export default function RegistrationPage() {
               }}>
               {loading ? 'Connecting...' : 'Connect Now'}
             </Button>
-          </Box>
+          </Paper>
         </Fade>
       </Container>
 
       <Typography sx={{
-        textAlign: 'right', px: 3, py: 2,
-        color: 'rgba(255,255,255,0.12)', fontSize: '0.6rem', zIndex: 1
+        textAlign: 'right', px: 3, py: 2, zIndex: 2,
+        color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem'
       }}>
         Made by Atoms
       </Typography>
