@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import bgImage from './background.png'; // Import image from the same folder
+import bgImage from './hero-image.png'; // Import image from the same folder
 
 export default function AppBackground() {
   return (
