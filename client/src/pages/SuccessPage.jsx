@@ -20,7 +20,7 @@ export default function SuccessPage() {
   const location = useLocation();
   const formData = location.state?.formData;
   const hotspotId = location.state?.hotspotId;
-  const knowsTConnect = location.state?.knowsTConnect; // NEW
+  const knowsTConnect = location.state?.knowsTConnect;
 
   const [vis, setVis] = React.useState(false);
   const [elapsed, setElapsed] = React.useState(0);
@@ -61,7 +61,7 @@ export default function SuccessPage() {
       const timer = setTimeout(() => {
         const authUrl = `http://${gwAddress}:${gwPort}/gw_redirect.php?gw_id=${gwId}&mac=${mac || ''}`;
         window.location.href = authUrl;
-      }, knowsTConnect === 'no' ? 8000 : 3000; // Give them 8 seconds to read if they don't know T-Connect, 3 if they do
+      }, knowsTConnect === 'no' ? 8000 : 3000); // Give them 8 seconds to read if they don't know T-Connect, 3 if they do
       return () => clearTimeout(timer);
     }
   }, [knowsTConnect]);

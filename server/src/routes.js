@@ -9,7 +9,7 @@ console.log('==============================');
 
 router.post('/register', async (req, res) => {
   try {
-    // UPDATED: Destructure knowsTConnect instead of useCase
+    // Destructure knowsTConnect instead of useCase
     const { fullName, connectReason, phone, email, hotspotId, knowsTConnect } = req.body;
 
     if (!fullName || fullName.trim() === '') {
@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
       phone: phone.trim(),
       email: email ? email.trim() : null,
       area: hotspotId || null,
-      // MAP: 'yes'/'no' maps to 'business'/'home' to satisfy DB constraint
+      // Map 'yes'/'no' to 'business'/'home' to satisfy DB constraint
       useCase: knowsTConnect === 'yes' ? 'business' : 'home' 
     });
 
@@ -43,12 +43,11 @@ router.post('/register', async (req, res) => {
         business: visitor.business,
         useCase: visitor.use_case,
         connectedAt: visitor.connected_at,
-        knowsTConnect: knowsTConnect // Pass it back to the frontend for the Success page logic
+        knowsTConnect: knowsTConnect // Pass it back to the frontend
       }
     });
 
   } catch (error) {
-    // ... (keep existing error handling)
     console.error('===== REGISTRATION ERROR =====');
     console.error('Message:', error.message);
     console.error('Detail:', error.detail);

@@ -175,9 +175,29 @@ export default function RegistrationPage() {
             {/* Do you know about T-Connect? */}
             <Box sx={{ mb: 3 }}>
               <Typography sx={labelSx}>Do you know about T-Connect?</Typography>
-              <ToggleButtonGroup value={form.knowsTConnect} exclusive onChange={(_, v) => v && setForm(p => ({ ...p, knowsTConnect: v }))} fullWidth sx={{ '& .MuiToggleButton-root': { py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888', textTransform: 'none', fontWeight: 500, borderRadius: 2, '&.Mui-selected': { bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100', borderColor: 'rgba(255,81,0,0.40)', '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' } } } }}>
+              <ToggleButtonGroup 
+                value={form.knowsTConnect} 
+                exclusive 
+                onChange={(_, v) => v && setForm(p => ({ ...p, knowsTConnect: v }))} 
+                fullWidth 
+                sx={{ 
+                  '& .MuiToggleButton-root': { 
+                    py: 1.4, 
+                    borderColor: 'rgba(255,255,255,0.1)', 
+                    color: '#888', 
+                    textTransform: 'none', 
+                    fontWeight: 500, 
+                    borderRadius: 2, 
+                    '&.Mui-selected': { 
+                      bgcolor: 'rgba(255,81,0,0.15)', 
+                      color: '#FF5100', 
+                      borderColor: 'rgba(255,81,0,0.40)', 
+                      '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' } 
+                    } 
+                  } 
+                }}
+              >
                 <ToggleButton value="yes">
-                  {/* FIXED: Use CheckIcon instead of generic Icon */}
                   <CheckIcon sx={{ mr: 1, fontSize: 18 }} />Yes
                 </ToggleButton>
                 <ToggleButton value="no">
@@ -187,11 +207,32 @@ export default function RegistrationPage() {
             </Box>
 
             <Box sx={{ mb: 3 }}>
-              <FormControlLabel control={<Checkbox checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} sx={{ color: '#888', '&.Mui-checked': { color: '#FF5100' } }} />} label={<Typography variant="body2" sx={{ color: '#BBBBBB', fontSize: '0.8rem' }}>I accept the Terms of Service and Acceptable Use Policy</Typography>} />
+              <FormControlLabel 
+                control={<Checkbox checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} sx={{ color: '#888', '&.Mui-checked': { color: '#FF5100' } }} />} 
+                label={<Typography variant="body2" sx={{ color: '#BBBBBB', fontSize: '0.8rem' }}>I accept the Terms of Service and Acceptable Use Policy</Typography>} 
+              />
               {errors.terms && !acceptedTerms && <Typography variant="caption" sx={{ color: '#FF3333', ml: 2, mt: -1, display: 'block' }}>You must accept the terms to connect</Typography>}
             </Box>
 
-            <Button variant="contained" size="large" onClick={submit} disabled={loading || !acceptedTerms} endIcon={loading ? <CircularProgress size={20} sx={{ color: 'rgba(255,255,255,0.5)' }} /> : <WifiIcon />} sx={{ width: '100%', py: 1.7, borderRadius: 3, background: '#FF5100', color: '#FFFFFF', fontWeight: 600, fontSize: '1rem', boxShadow: '0 4px 20px rgba(255,81,0,0.30)', '&:hover': { background: '#FF6A2A' }, '&.Mui-disabled': { bgcolor: 'rgba(255,81,0,0.20)', color: 'rgba(255,255,255,0.4)' } }}>
+            <Button 
+              variant="contained" 
+              size="large" 
+              onClick={submit} 
+              disabled={loading || !acceptedTerms} 
+              endIcon={loading ? <CircularProgress size={20} sx={{ color: 'rgba(255,255,255,0.5)' }} /> : <WifiIcon />} 
+              sx={{ 
+                width: '100%', 
+                py: 1.7, 
+                borderRadius: 3, 
+                background: '#FF5100', 
+                color: '#FFFFFF', 
+                fontWeight: 600, 
+                fontSize: '1rem', 
+                boxShadow: '0 4px 20px rgba(255,81,0,0.30)', 
+                '&:hover': { background: '#FF6A2A' }, 
+                '&.Mui-disabled': { bgcolor: 'rgba(255,81,0,0.20)', color: 'rgba(255,255,255,0.4)' } 
+              }}
+            >
               {loading ? 'Connecting...' : 'Connect Now'}
             </Button>
           </Paper>
