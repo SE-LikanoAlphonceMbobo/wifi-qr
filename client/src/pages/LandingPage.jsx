@@ -8,11 +8,14 @@ import Fade from '@mui/material/Fade';
 import WifiIcon from '@mui/icons-material/Wifi';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import TConnectLogo from '../components/TConnectLogo';
+import LanguageToggle from '../components/LanguageToggle';
 import AppBackground from '../components/AppBackground';
+import { useLang } from '../context/LanguageContext';
 
 export default function LandingPage() {
   const [vis, setVis] = React.useState(false);
   const navigate = useNavigate();
+  const { t } = useLang();
 
   React.useEffect(() => { setTimeout(() => setVis(true), 200); }, []);
 
@@ -27,10 +30,15 @@ export default function LandingPage() {
       px: 3,
       py: 6,
       overflow: 'hidden',
-      bgcolor: '#000000' // Fallback
+      bgcolor: '#000000'
     }}>
       
       <AppBackground />
+
+      {/* Language Toggle - Top Right */}
+      <Box sx={{ position: 'fixed', top: 16, right: 20, zIndex: 10 }}>
+        <LanguageToggle />
+      </Box>
 
       {/* Orange glow */}
       <Box sx={{
@@ -62,7 +70,7 @@ export default function LandingPage() {
             color: '#FF5100', fontWeight: 600, fontSize: '0.6rem',
             letterSpacing: 2.5, textTransform: 'uppercase', mb: 5, lineHeight: 1
           }}>
-            Starlink Authorized Reseller
+            {t.landing.starlink}
           </Typography>
 
           {/* WiFi Icon with pulse rings */}
@@ -94,18 +102,18 @@ export default function LandingPage() {
             color: '#FFFFFF', fontSize: { xs: '1.6rem', sm: '2rem' },
             fontWeight: 700, lineHeight: 1.2, mb: 1.5
           }}>
-            Connect to Free WiFi
+            {t.landing.title}
           </Typography>
 
           <Typography sx={{
             maxWidth: 300, mx: 'auto', lineHeight: 1.6,
             color: 'rgba(255,255,255,0.70)', fontSize: '0.88rem', mb: 5
           }}>
-            Get high-speed internet access powered by Starlink satellite technology
+            {t.landing.subtitle}
           </Typography>
 
           <Button variant="contained" size="large"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate(`/register${window.location.search}`)}
             endIcon={<ArrowForwardIcon />}
             sx={{
               width: '100%', py: 1.8, fontSize: '1rem', fontWeight: 600,
@@ -113,14 +121,14 @@ export default function LandingPage() {
               boxShadow: '0 4px 20px rgba(255,81,0,0.30)',
               '&:hover': { background: '#FF6A2A' }
             }}>
-            Get Connected
+            {t.landing.getConnected}
           </Button>
 
           <Typography sx={{
             mt: 3, color: 'rgba(255,255,255,0.35)',
             fontSize: '0.68rem', lineHeight: 1.5
           }}>
-            By connecting you agree to our Terms of Service and Acceptable Use Policy
+            {t.landing.terms}
           </Typography>
         </Box>
       </Fade>
@@ -129,7 +137,7 @@ export default function LandingPage() {
         position: 'fixed', bottom: 16, right: 20,
         color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem', zIndex: 2
       }}>
-        Powered-by T-Connect-IT
+        {t.landing.poweredBy}
       </Typography>
     </Box>
   );
