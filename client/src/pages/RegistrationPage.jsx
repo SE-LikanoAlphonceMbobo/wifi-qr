@@ -15,21 +15,21 @@ import Fade from '@mui/material/Fade';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
-import BusinessIcon from '@mui/icons-material/Business';
+import InterestsIcon from '@mui/icons-material/Interests';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
 import HomeIcon from '@mui/icons-material/Home';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AppBackground from '../components/AppBackground';
 
-const AREAS = [
-  'Maseru', 'Butha-Buthe', 'Leribe', 'Berea',
-  'Mafeteng', "Mohale's Hoek", 'Quthing', "Qacha's Nek",
-  'Mokhotlong', 'Thaba-Tseka', 'Other'
+const CONNECT_REASONS = [
+  'School', 'Work', 'Entertainment', 'Research', 'Social Media', 'Video Conferencing'
 ];
 
 const inputSx = {
@@ -53,14 +53,29 @@ const adornment = (IconComp) => (
 export default function RegistrationPage() {
   const navigate = useNavigate();
   const [form, setForm] = React.useState({
-    fullName: '', business: '', phone: '',
-    email: '', areaOfOperation: '', useCase: 'home'
+    fullName: '', connectReason: '', phone: '',
+    email: '', hotspotId: '', useCase: 'home'
   });
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const [vis, setVis] = React.useState(false);
+  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
+  const [hotspots, setHotspots] = React.useState([]);
 
   React.useEffect(() => { setTimeout(() => setVis(true), 150); }, []);
+
+  React.useEffect(() => {
+    const fetchHotspots = async () => {
+      try {
+        const res = await fetch('https://t-connect-wifi-qr-server.vercel.app/api/hotspots');
+        const data = await res.json();
+        if (data.success) setHotspots(data.data);
+      } catch (err) {
+        console.error('Failed to load hotspots', err);
+      }
+    };
+    fetchHotspots();
+  }, []);
 
   const set = (field) => (e) => {
     setForm(p => ({ ...p, [field]: e.target.value }));
@@ -72,6 +87,8 @@ export default function RegistrationPage() {
     if (!form.fullName.trim()) e.fullName = 'Full name is required';
     if (!form.phone.trim()) e.phone = 'Phone number is required';
     else if (!/^[\d\s+()\-]{7,16}$/.test(form.phone.trim())) e.phone = 'Enter a valid phone number';
+    if (!form.hotspotId) e.hotspotId = 'Please select a hotspot';
+    if (!acceptedTerms) e.terms = 'You must accept the terms';
     setErrors(e);
     return !Object.keys(e).length;
   };
@@ -87,7 +104,7 @@ export default function RegistrationPage() {
       });
       const data = await res.json();
       if (data.success) {
-        navigate('/success', { state: { formData: data.data } });
+        navigate(`/success${window.location.search}`, { state: { formData: data.data, hotspotId: form.hotspotId } });
       } else {
         setErrors({ phone: data.error || 'Registration failed' });
       }
@@ -97,155 +114,84 @@ export default function RegistrationPage() {
     setLoading(false);
   };
 
-  const labelSx = {
-    color: '#BBBBBB', fontWeight: 500,
-    fontSize: '0.78rem', mb: 1, lineHeight: 1
+  const labelSx = { color: '#BBBBBB', fontWeight: 500, fontSize: '0.78rem', mb: 1, lineHeight: 1 };
+  const selectSx = {
+    borderRadius: 2, bgcolor: 'rgba(255,255,255,0.06)',
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF5100', borderWidth: 2 },
+    '& .MuiSelect-icon': { color: '#888' }
   };
 
   return (
-    <Box sx={{
-      minHeight: '100dvh', display: 'flex', flexDirection: 'column',
-      position: 'relative', bgcolor: '#000000'
-    }}>
-      
+    <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative', bgcolor: '#000000' }}>
       <AppBackground />
-
-      {/* Header */}
       <Box sx={{ px: 2, py: 2, display: 'flex', alignItems: 'center', zIndex: 2 }}>
-        <IconButton onClick={() => navigate('/')} sx={{ color: '#FFFFFF', bgcolor: 'rgba(0,0,0,0.3)' }}>
-          <ArrowBackIcon />
-        </IconButton>
+        <IconButton onClick={() => navigate('/')} sx={{ color: '#FFFFFF', bgcolor: 'rgba(0,0,0,0.3)' }}><ArrowBackIcon /></IconButton>
       </Box>
 
       <Container maxWidth="sm" sx={{ py: 0, zIndex: 2, flex: 1, px: 3, pb: 4 }}>
         <Fade in={vis} timeout={700}>
-          {/* Frosted Glass Card Container */}
-          <Paper elevation={0} sx={{
-            p: 4, 
-            borderRadius: 4,
-            bgcolor: 'rgba(0, 0, 0, 0.60)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.08)'
-          }}>
-            <Typography sx={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.5rem', mb: 0.5, lineHeight: 1.3 }}>
-              Quick Registration
-            </Typography>
-            <Typography sx={{ color: '#AAAAAA', fontSize: '0.85rem', mb: 4, lineHeight: 1.4 }}>
-              Fill in your details to get connected
-            </Typography>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: 4, bgcolor: 'rgba(0, 0, 0, 0.60)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <Typography sx={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.5rem', mb: 0.5, lineHeight: 1.3 }}>Quick Registration</Typography>
+            <Typography sx={{ color: '#AAAAAA', fontSize: '0.85rem', mb: 4, lineHeight: 1.4 }}>Fill in your details to get connected</Typography>
 
-            {/* Full Names * */}
             <Box sx={{ mb: 3 }}>
               <Typography sx={labelSx}>Full Names *</Typography>
-              <TextField fullWidth placeholder="Enter your full name"
-                value={form.fullName} onChange={set('fullName')}
-                error={!!errors.fullName} helperText={errors.fullName}
-                variant="outlined" size="small"
-                InputProps={{ startAdornment: adornment(PersonIcon) }}
-                sx={inputSx} />
+              <TextField fullWidth placeholder="Enter your full name" value={form.fullName} onChange={set('fullName')} error={!!errors.fullName} helperText={errors.fullName} variant="outlined" size="small" InputProps={{ startAdornment: adornment(PersonIcon) }} sx={inputSx} />
             </Box>
 
-            {/* Business */}
             <Box sx={{ mb: 3 }}>
-              <Typography sx={labelSx}>Business</Typography>
-              <TextField fullWidth placeholder="Your business name (optional)"
-                value={form.business} onChange={set('business')}
-                variant="outlined" size="small"
-                InputProps={{ startAdornment: adornment(BusinessIcon) }}
-                sx={inputSx} />
-            </Box>
-
-            {/* Phone * */}
-            <Box sx={{ mb: 3 }}>
-              <Typography sx={labelSx}>Phone *</Typography>
-              <TextField fullWidth placeholder="+266 XXXX XXXX" type="tel"
-                value={form.phone} onChange={set('phone')}
-                error={!!errors.phone} helperText={errors.phone}
-                variant="outlined" size="small"
-                InputProps={{ startAdornment: adornment(PhoneIcon) }}
-                sx={inputSx} />
-            </Box>
-
-            {/* Email */}
-            <Box sx={{ mb: 3 }}>
-              <Typography sx={labelSx}>Email</Typography>
-              <TextField fullWidth placeholder="your@email.com (optional)" type="email"
-                value={form.email} onChange={set('email')}
-                variant="outlined" size="small"
-                InputProps={{ startAdornment: adornment(EmailIcon) }}
-                sx={inputSx} />
-            </Box>
-
-            {/* Area of Operation */}
-            <Box sx={{ mb: 3 }}>
-              <Typography sx={labelSx}>Area of Operation</Typography>
+              <Typography sx={labelSx}>What do you connect for?</Typography>
               <FormControl fullWidth size="small">
-                <Select value={form.areaOfOperation}
-                  onChange={set('areaOfOperation')}
-                  displayEmpty
-                  startAdornment={adornment(LocationOnIcon)}
-                  sx={{
-                    borderRadius: 2,
-                    bgcolor: 'rgba(255,255,255,0.06)',
-                    color: form.areaOfOperation ? '#FFFFFF' : '#666',
-                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
-                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF5100', borderWidth: 2 },
-                    '& .MuiSelect-icon': { color: '#888' }
-                  }}>
-                  <MenuItem value="" disabled>Select your area</MenuItem>
-                  {AREAS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
+                <Select value={form.connectReason} onChange={set('connectReason')} displayEmpty startAdornment={adornment(InterestsIcon)} sx={{ ...selectSx, color: form.connectReason ? '#FFFFFF' : '#666' }}>
+                  <MenuItem value="" disabled>Select reason</MenuItem>
+                  {CONNECT_REASONS.map(reason => <MenuItem key={reason} value={reason}>{reason}</MenuItem>)}
                 </Select>
               </FormControl>
             </Box>
 
-            {/* Use Case */}
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 3 }}>
+              <Typography sx={labelSx}>Phone *</Typography>
+              <TextField fullWidth placeholder="+266 XXXX XXXX" type="tel" value={form.phone} onChange={set('phone')} error={!!errors.phone} helperText={errors.phone} variant="outlined" size="small" InputProps={{ startAdornment: adornment(PhoneIcon) }} sx={inputSx} />
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+              <Typography sx={labelSx}>Email</Typography>
+              <TextField fullWidth placeholder="your@email.com (optional)" type="email" value={form.email} onChange={set('email')} variant="outlined" size="small" InputProps={{ startAdornment: adornment(EmailIcon) }} sx={inputSx} />
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+              <Typography sx={labelSx}>Free Hotspots *</Typography>
+              <FormControl fullWidth size="small" error={!!errors.hotspotId}>
+                <Select value={form.hotspotId} onChange={set('hotspotId')} displayEmpty startAdornment={adornment(WifiTetheringIcon)} sx={{ ...selectSx, color: form.hotspotId ? '#FFFFFF' : '#666' }}>
+                  <MenuItem value="" disabled>Select hotspot location</MenuItem>
+                  {hotspots.map(spot => <MenuItem key={spot.id} value={spot.id}>{spot.name}</MenuItem>)}
+                </Select>
+                {errors.hotspotId && <Typography variant="caption" sx={{ color: '#FF3333', ml: 2, mt: 0.5 }}>{errors.hotspotId}</Typography>}
+              </FormControl>
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
               <Typography sx={labelSx}>Use Case</Typography>
-              <ToggleButtonGroup value={form.useCase} exclusive
-                onChange={(_, v) => v && setForm(p => ({ ...p, useCase: v }))}
-                fullWidth sx={{
-                  '& .MuiToggleButton-root': {
-                    py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888',
-                    textTransform: 'none', fontWeight: 500, borderRadius: 2,
-                    '&.Mui-selected': {
-                      bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100',
-                      borderColor: 'rgba(255,81,0,0.40)',
-                      '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' }
-                    }
-                  }
-                }}>
-                <ToggleButton value="home">
-                  <HomeIcon sx={{ mr: 1, fontSize: 18 }} />Home
-                </ToggleButton>
-                <ToggleButton value="business">
-                  <ApartmentIcon sx={{ mr: 1, fontSize: 18 }} />Business
-                </ToggleButton>
+              <ToggleButtonGroup value={form.useCase} exclusive onChange={(_, v) => v && setForm(p => ({ ...p, useCase: v }))} fullWidth sx={{ '& .MuiToggleButton-root': { py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888', textTransform: 'none', fontWeight: 500, borderRadius: 2, '&.Mui-selected': { bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100', borderColor: 'rgba(255,81,0,0.40)', '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' } } } }}>
+                <ToggleButton value="home"><HomeIcon sx={{ mr: 1, fontSize: 18 }} />Home</ToggleButton>
+                <ToggleButton value="business"><ApartmentIcon sx={{ mr: 1, fontSize: 18 }} />Business</ToggleButton>
               </ToggleButtonGroup>
             </Box>
 
-            {/* Submit */}
-            <Button variant="contained" size="large" onClick={submit} disabled={loading}
-              endIcon={loading ? <CircularProgress size={20} sx={{ color: 'rgba(255,255,255,0.5)' }} /> : <WifiIcon />}
-              sx={{
-                width: '100%', py: 1.7, borderRadius: 3,
-                background: '#FF5100', color: '#FFFFFF',
-                fontWeight: 600, fontSize: '1rem',
-                boxShadow: '0 4px 20px rgba(255,81,0,0.30)',
-                '&:hover': { background: '#FF6A2A' }
-              }}>
+            <Box sx={{ mb: 3 }}>
+              <FormControlLabel control={<Checkbox checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} sx={{ color: '#888', '&.Mui-checked': { color: '#FF5100' } }} />} label={<Typography variant="body2" sx={{ color: '#BBBBBB', fontSize: '0.8rem' }}>I accept the Terms of Service and Acceptable Use Policy</Typography>} />
+              {errors.terms && !acceptedTerms && <Typography variant="caption" sx={{ color: '#FF3333', ml: 2, mt: -1, display: 'block' }}>You must accept the terms to connect</Typography>}
+            </Box>
+
+            <Button variant="contained" size="large" onClick={submit} disabled={loading || !acceptedTerms} endIcon={loading ? <CircularProgress size={20} sx={{ color: 'rgba(255,255,255,0.5)' }} /> : <WifiIcon />} sx={{ width: '100%', py: 1.7, borderRadius: 3, background: '#FF5100', color: '#FFFFFF', fontWeight: 600, fontSize: '1rem', boxShadow: '0 4px 20px rgba(255,81,0,0.30)', '&:hover': { background: '#FF6A2A' }, '&.Mui-disabled': { bgcolor: 'rgba(255,81,0,0.20)', color: 'rgba(255,255,255,0.4)' } }}>
               {loading ? 'Connecting...' : 'Connect Now'}
             </Button>
           </Paper>
         </Fade>
       </Container>
-
-      <Typography sx={{
-        textAlign: 'right', px: 3, py: 2, zIndex: 2,
-        color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem'
-      }}>
-        Powered-by T-Connect-IT
-      </Typography>
+      <Typography sx={{ textAlign: 'right', px: 3, py: 2, zIndex: 2, color: 'rgba(255,255,255,0.15)', fontSize: '0.6rem' }}>Powered-by T-Connect-IT</Typography>
     </Box>
   );
 }

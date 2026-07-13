@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createVisitor } = require('./model');
+const { createVisitor, getHotspots, getHotspotCredentials } = require('./model');
 
-// Log WiFi config on startup to verify .env is loaded
 console.log('===== WIFI CONFIG LOADED =====');
 console.log('SSID:', process.env.WIFI_SSID);
 console.log('Security:', process.env.WIFI_SECURITY);
@@ -10,7 +9,7 @@ console.log('==============================');
 
 router.post('/register', async (req, res) => {
   try {
-    const { fullName, business, phone, email, areaOfOperation, useCase } = req.body;
+    const { fullName, connectReason, phone, email, hotspotId, useCase } = req.body;
 
     if (!fullName || fullName.trim() === '') {
       return res.status(400).json({ success: false, error: 'Full name is required' });
@@ -26,10 +25,10 @@ router.post('/register', async (req, res) => {
     const visitor = await createVisitor({
       firstName,
       lastName,
-      business: business ? business.trim() : null,
+      business: connectReason || null,
       phone: phone.trim(),
       email: email ? email.trim() : null,
-      area: areaOfOperation || null,
+      area: hotspotId || null,
       useCase: useCase || 'home'
     });
 
@@ -59,14 +58,34 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// WiFi config endpoint — reads directly from .env, ZERO hardcoding
+router.get('/hotspots', async (req, res) => {
+  try {
+    const hotspots = await getHotspots();
+    res.json({ success: true, data: hotspots });
+  } catch (error) {
+    console.error('Error fetching hotspots:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch hotspots' });
+  }
+});
+
+router.get('/hotspot/:id', async (req, res) => {
+  try {
+    const credentials = await getHotspotCredentials(req.params.id);
+    if (!credentials) {
+      return res.status(404).json({ success: false, error: 'Hotspot not found' });
+    }
+    res.json({ success: true, data: credentials });
+  } catch (error) {
+    console.error('Error fetching hotspot credentials:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch credentials' });
+  }
+});
+
 router.get('/config', (req, res) => {
   res.json({
     success: true,
     data: {
-      ssid: process.env.WIFI_SSID,
-      password: process.env.WIFI_PASSWORD,
-      security: process.env.WIFI_SECURITY
+      splashUrl: process.env.SPLASH_URL || null
     }
   });
 });

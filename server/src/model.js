@@ -15,19 +15,31 @@ const initDatabase = async () => {
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS visitors (
-        id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        first_name    VARCHAR(100) NOT NULL,
-        last_name     VARCHAR(100) NOT NULL,
-        business      VARCHAR(200),
-        phone         VARCHAR(20),
-        email         VARCHAR(200),
-        area          VARCHAR(100),
-        use_case      VARCHAR(20) CHECK (use_case IN ('home','business')),
-        connected_at  TIMESTAMPTZ DEFAULT now(),
-        session_id    UUID
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        business VARCHAR(200),
+        phone VARCHAR(20) NOT NULL,
+        email VARCHAR(200),
+        area VARCHAR(100),
+        use_case VARCHAR(20) CHECK (use_case IN ('home','business')),
+        connected_at TIMESTAMPTZ DEFAULT now(),
+        session_id UUID
       );
     `);
-    console.log('PostgreSQL: visitors table verified/created');
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS hotspots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(100) NOT NULL,
+        ssid VARCHAR(100) NOT NULL,
+        password VARCHAR(100) NOT NULL,
+        security VARCHAR(20) DEFAULT 'WPA2',
+        venue VARCHAR(100)
+      );
+    `);
+
+    console.log('PostgreSQL: tables verified/created');
   } catch (err) {
     console.error('===== DATABASE INIT ERROR =====');
     console.error('Message:', err.message);
@@ -52,6 +64,7 @@ const createVisitor = async ({ firstName, lastName, business, phone, email, area
     console.error('Message:', err.message);
     console.error('Detail:', err.detail);
     console.error('Code:', err.code);
+    console.error('Values:', values);
     console.error('===========================');
     throw err;
   }
@@ -62,8 +75,20 @@ const getVisitors = async () => {
   return result.rows;
 };
 
+const getHotspots = async () => {
+  const result = await pool.query('SELECT id, name FROM hotspots ORDER BY name;');
+  return result.rows;
+};
+
+const getHotspotCredentials = async (id) => {
+  const result = await pool.query('SELECT ssid, password, security, venue FROM hotspots WHERE id = $1;', [id]);
+  return result.rows[0];
+};
+
 module.exports = {
   initDatabase,
   createVisitor,
-  getVisitors
+  getVisitors,
+  getHotspots,
+  getHotspotCredentials
 };
