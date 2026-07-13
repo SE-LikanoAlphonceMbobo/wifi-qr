@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CheckIcon from '@mui/icons-material/Check';
 import PlaceIcon from '@mui/icons-material/Place';
 import WifiIcon from '@mui/icons-material/Wifi';
+import BusinessIcon from '@mui/icons-material/Business';
 import TConnectLogo from '../components/TConnectLogo';
 import AppBackground from '../components/AppBackground';
 
@@ -19,6 +20,7 @@ export default function SuccessPage() {
   const location = useLocation();
   const formData = location.state?.formData;
   const hotspotId = location.state?.hotspotId;
+  const knowsTConnect = location.state?.knowsTConnect; // NEW
 
   const [vis, setVis] = React.useState(false);
   const [elapsed, setElapsed] = React.useState(0);
@@ -59,10 +61,10 @@ export default function SuccessPage() {
       const timer = setTimeout(() => {
         const authUrl = `http://${gwAddress}:${gwPort}/gw_redirect.php?gw_id=${gwId}&mac=${mac || ''}`;
         window.location.href = authUrl;
-      }, 3000);
+      }, knowsTConnect === 'no' ? 8000 : 3000; // Give them 8 seconds to read if they don't know T-Connect, 3 if they do
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [knowsTConnect]);
 
   const fmtTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
@@ -81,7 +83,7 @@ export default function SuccessPage() {
           <Typography sx={{ color: 'rgba(255,255,255,0.60)', fontSize: '0.95rem', lineHeight: 1.5, mb: 1 }}>Your internet access is being authorized</Typography>
 
           {!wifiConfig ? <CircularProgress size={24} sx={{ color: '#FF5100', mb: 4 }} /> : (
-            <Paper elevation={0} sx={{ width: '100%', mb: 4, bgcolor: 'rgba(0,0,0,0.60)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden', backdropFilter: 'blur(20px)' }}>
+            <Paper elevation={0} sx={{ width: '100%', mb: 3, bgcolor: 'rgba(0,0,0,0.60)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden', backdropFilter: 'blur(20px)' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
                 <Box sx={{ textAlign: 'left' }}>
                   <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>Network</Typography>
@@ -111,8 +113,32 @@ export default function SuccessPage() {
             </Paper>
           )}
 
+          {/* CONDITIONAL: About T-Connect (Only shows if they answered "No") */}
+          {knowsTConnect === 'no' && (
+            <Fade in={vis} timeout={1500}>
+              <Paper elevation={0} sx={{
+                width: '100%', mb: 3, p: 3,
+                bgcolor: 'rgba(255, 81, 0, 0.05)',
+                border: '1px solid rgba(255,81,0,0.15)',
+                borderRadius: 3
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                  <BusinessIcon sx={{ fontSize: 20, color: '#FF5100' }} />
+                  <Typography sx={{ fontWeight: 700, color: '#FF5100', fontSize: '0.9rem' }}>About T-Connect</Typography>
+                </Box>
+                <Typography sx={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.82rem', lineHeight: 1.7, textAlign: 'left' }}>
+                  T-Connect, a digital transformation group, is an authorised Starlink Reseller providing specialised satellite internet and technology solutions for small, micro, medium and large business enterprises. As a managed service provider with a particular focus on connectivity and operational efficiency, the company provides satellite internet as a service with quality, uptime, performance, and SLA monitoring coupled with digital solutions.
+                </Typography>
+              </Paper>
+            </Fade>
+          )}
+
           <Typography sx={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 600, lineHeight: 1.5, mb: 1 }}>Thank you for registering!</Typography>
-          <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', lineHeight: 1.6, mb: 4, maxWidth: 300 }}>You will be redirected to the internet automatically. Do not close this page.</Typography>
+          <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', lineHeight: 1.6, mb: 4, maxWidth: 300 }}>
+            {knowsTConnect === 'no' 
+              ? 'Learn more about us while your access is being authorized.' 
+              : 'You will be redirected to the internet automatically. Do not close this page.'}
+          </Typography>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <Typography sx={{ color: 'rgba(255,255,255,0.40)', fontSize: '0.68rem', fontWeight: 600, letterSpacing: 1, lineHeight: 1 }}>T-CONNECT</Typography>

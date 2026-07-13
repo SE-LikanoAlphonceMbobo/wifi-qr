@@ -23,8 +23,7 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
-import HomeIcon from '@mui/icons-material/Home';
-import ApartmentIcon from '@mui/icons-material/Apartment';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AppBackground from '../components/AppBackground';
 
@@ -54,7 +53,7 @@ export default function RegistrationPage() {
   const navigate = useNavigate();
   const [form, setForm] = React.useState({
     fullName: '', connectReason: '', phone: '',
-    email: '', hotspotId: '', useCase: 'home'
+    email: '', hotspotId: '', knowsTConnect: 'no' // Changed from useCase
   });
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
@@ -104,7 +103,7 @@ export default function RegistrationPage() {
       });
       const data = await res.json();
       if (data.success) {
-        navigate(`/success${window.location.search}`, { state: { formData: data.data, hotspotId: form.hotspotId } });
+        navigate(`/success${window.location.search}`, { state: { formData: data.data, hotspotId: form.hotspotId, knowsTConnect: form.knowsTConnect } });
       } else {
         setErrors({ phone: data.error || 'Registration failed' });
       }
@@ -172,11 +171,16 @@ export default function RegistrationPage() {
               </FormControl>
             </Box>
 
+            {/* NEW: Do you know about T-Connect? */}
             <Box sx={{ mb: 3 }}>
-              <Typography sx={labelSx}>Use Case</Typography>
-              <ToggleButtonGroup value={form.useCase} exclusive onChange={(_, v) => v && setForm(p => ({ ...p, useCase: v }))} fullWidth sx={{ '& .MuiToggleButton-root': { py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888', textTransform: 'none', fontWeight: 500, borderRadius: 2, '&.Mui-selected': { bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100', borderColor: 'rgba(255,81,0,0.40)', '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' } } } }}>
-                <ToggleButton value="home"><HomeIcon sx={{ mr: 1, fontSize: 18 }} />Home</ToggleButton>
-                <ToggleButton value="business"><ApartmentIcon sx={{ mr: 1, fontSize: 18 }} />Business</ToggleButton>
+              <Typography sx={labelSx}>Do you know about T-Connect?</Typography>
+              <ToggleButtonGroup value={form.knowsTConnect} exclusive onChange={(_, v) => v && setForm(p => ({ ...p, knowsTConnect: v }))} fullWidth sx={{ '& .MuiToggleButton-root': { py: 1.4, borderColor: 'rgba(255,255,255,0.1)', color: '#888', textTransform: 'none', fontWeight: 500, borderRadius: 2, '&.Mui-selected': { bgcolor: 'rgba(255,81,0,0.15)', color: '#FF5100', borderColor: 'rgba(255,81,0,0.40)', '&:hover': { bgcolor: 'rgba(255,81,0,0.20)' } } } }}>
+                <ToggleButton value="yes">
+                  <Icon sx={{ mr: 1, fontSize: 18 }}>check</Icon>Yes
+                </ToggleButton>
+                <ToggleButton value="no">
+                  <HelpOutlineIcon sx={{ mr: 1, fontSize: 18 }} />No
+                </ToggleButton>
               </ToggleButtonGroup>
             </Box>
 

@@ -9,7 +9,8 @@ console.log('==============================');
 
 router.post('/register', async (req, res) => {
   try {
-    const { fullName, connectReason, phone, email, hotspotId, useCase } = req.body;
+    // UPDATED: Destructure knowsTConnect instead of useCase
+    const { fullName, connectReason, phone, email, hotspotId, knowsTConnect } = req.body;
 
     if (!fullName || fullName.trim() === '') {
       return res.status(400).json({ success: false, error: 'Full name is required' });
@@ -29,7 +30,8 @@ router.post('/register', async (req, res) => {
       phone: phone.trim(),
       email: email ? email.trim() : null,
       area: hotspotId || null,
-      useCase: useCase || 'home'
+      // MAP: 'yes'/'no' maps to 'business'/'home' to satisfy DB constraint
+      useCase: knowsTConnect === 'yes' ? 'business' : 'home' 
     });
 
     res.status(201).json({
@@ -40,11 +42,13 @@ router.post('/register', async (req, res) => {
         fullName: `${visitor.first_name} ${visitor.last_name}`.trim(),
         business: visitor.business,
         useCase: visitor.use_case,
-        connectedAt: visitor.connected_at
+        connectedAt: visitor.connected_at,
+        knowsTConnect: knowsTConnect // Pass it back to the frontend for the Success page logic
       }
     });
 
   } catch (error) {
+    // ... (keep existing error handling)
     console.error('===== REGISTRATION ERROR =====');
     console.error('Message:', error.message);
     console.error('Detail:', error.detail);
