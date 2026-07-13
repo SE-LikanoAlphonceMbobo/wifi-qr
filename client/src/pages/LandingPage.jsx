@@ -83,7 +83,7 @@ export default function LandingPage() {
             ))}
             <Avatar sx={{
               width: 72, height: 72,
-              bgcolor: 'rgba(255,81,0,0.15)',
+              bgcolor: 'rgba(255,81,0,0.16)',
               border: '1.5px solid rgba(255,81,0,0.30)'
             }}>
               <WifiIcon sx={{ fontSize: 38, color: '#FF5100' }} />
