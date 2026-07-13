@@ -23,7 +23,7 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+ 
 import CheckIcon from '@mui/icons-material/Check';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AppBackground from '../components/AppBackground';
@@ -201,7 +201,7 @@ export default function RegistrationPage() {
                   <CheckIcon sx={{ mr: 1, fontSize: 18 }} />Yes
                 </ToggleButton>
                 <ToggleButton value="no">
-                  <HelpOutlineIcon sx={{ mr: 1, fontSize: 18 }} />No
+                  No
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
