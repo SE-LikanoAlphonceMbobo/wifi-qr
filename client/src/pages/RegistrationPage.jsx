@@ -24,6 +24,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import CheckIcon from '@mui/icons-material/Check';  // <-- ADD THIS LINE
 import WifiIcon from '@mui/icons-material/Wifi';
 import AppBackground from '../components/AppBackground';
 
