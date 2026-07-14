@@ -66,6 +66,20 @@ export default function SuccessPage() {
     }
   }, [knowsTConnect]);
 
+    // MIKROTIK CAPTIVE PORTAL AUTO-UNLOCK
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const routerIp = params.get('router');
+    const gwAddress = params.get('gw_address');
+
+    if (routerIp && !gwAddress) {
+      const timer = setTimeout(() => {
+        window.location.href = `http://${routerIp}/login?username=free&password=free&dst=`;
+      }, knowsTConnect === 'no' ? 8000 : 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [knowsTConnect]);
+
   const fmtTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
   return (
