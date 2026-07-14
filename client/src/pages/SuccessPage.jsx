@@ -74,7 +74,7 @@ export default function SuccessPage() {
 
     if (routerIp && !gwAddress) {
       const timer = setTimeout(() => {
-        window.location.href = `http://${routerIp}/login?username=free&password=free&dst=`;
+        window.location.href = `http://${routerIp}/login?username=free&password=free&dst=https://t-connect-free-wifi.vercel.app/enjoy`;
       }, knowsTConnect === 'no' ? 8000 : 3000);
       return () => clearTimeout(timer);
     }
