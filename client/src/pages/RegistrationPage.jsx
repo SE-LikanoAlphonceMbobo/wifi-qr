@@ -71,7 +71,7 @@ export default function RegistrationPage() {
   React.useEffect(() => {
     const fetchHotspots = async () => {
       try {
-        const res = await fetch('https://t-connect-wifi-qr-server.vercel.app/api/hotspots');
+        const res = await fetch('/api/hotspots');
         const data = await res.json();
         if (data.success) setHotspots(data.data);
       } catch (err) {
@@ -101,7 +101,7 @@ export default function RegistrationPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const res = await fetch('https://t-connect-wifi-qr-server.vercel.app/api/register', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

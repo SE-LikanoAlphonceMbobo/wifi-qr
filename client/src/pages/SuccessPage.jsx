@@ -15,6 +15,7 @@ import WifiIcon from '@mui/icons-material/Wifi';
 import BusinessIcon from '@mui/icons-material/Business';
 import TConnectLogo from '../components/TConnectLogo';
 import LanguageToggle from '../components/LanguageToggle';
+import WiFiQRCode from '../components/WiFiQRCode';
 import AppBackground from '../components/AppBackground';
 import { useLang } from '../context/LanguageContext';
 
@@ -33,7 +34,7 @@ export default function SuccessPage() {
     const fetchCredentials = async () => {
       if (!hotspotId) return;
       try {
-        const res = await fetch(`https://t-connect-wifi-qr-server.vercel.app/api/hotspot/${hotspotId}`);
+        const res = await fetch(`/api/hotspot/${hotspotId}`);
         const data = await res.json();
         if (data.success) setWifiConfig(data.data);
       } catch (err) {
@@ -102,35 +103,45 @@ export default function SuccessPage() {
           <Typography sx={{ color: '#FFFFFF', fontSize: { xs: '1.4rem', sm: '1.8rem' }, fontWeight: 700, lineHeight: 1.2, mb: 0.5 }}>{t.success.connected}</Typography>
           <Typography sx={{ color: 'rgba(255,255,255,0.60)', fontSize: '0.95rem', lineHeight: 1.5, mb: 1 }}>{t.success.authorizing}</Typography>
 
-          {!wifiConfig ? <CircularProgress size={24} sx={{ color: '#FF5100', mb: 4 }} /> : (
-            <Paper elevation={0} sx={{ width: '100%', mb: 3, bgcolor: 'rgba(0,0,0,0.60)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden', backdropFilter: 'blur(20px)' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
-                <Box sx={{ textAlign: 'left' }}>
-                  <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.network}</Typography>
-                  <Typography sx={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.95rem', lineHeight: 1.2 }}>{wifiConfig?.ssid || 'Loading...'}</Typography>
-                </Box>
-                <WifiIcon sx={{ fontSize: 22, color: '#FF5100' }} />
-              </Box>
-              <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
-                <Box sx={{ textAlign: 'left' }}>
-                  <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.status}</Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4CAF50', boxShadow: '0 0 8px rgba(76,175,80,0.5)' }} />
-                    <Typography sx={{ fontWeight: 600, color: '#4CAF50', fontSize: '0.95rem', lineHeight: 1.2 }}>{t.success.authorized}</Typography>
+          {!wifiConfig ? (
+            <CircularProgress size={24} sx={{ color: '#FF5100', mb: 4 }} />
+          ) : (
+            <>
+              <WiFiQRCode
+                ssid={wifiConfig.ssid}
+                password={wifiConfig.password}
+                security={wifiConfig.security}
+              />
+              <Box sx={{ mb: 3 }} />
+              <Paper elevation={0} sx={{ width: '100%', mb: 3, bgcolor: 'rgba(0,0,0,0.60)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden', backdropFilter: 'blur(20px)' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
+                  <Box sx={{ textAlign: 'left' }}>
+                    <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.network}</Typography>
+                    <Typography sx={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.95rem', lineHeight: 1.2 }}>{wifiConfig?.ssid || 'Loading...'}</Typography>
                   </Box>
+                  <WifiIcon sx={{ fontSize: 22, color: '#FF5100' }} />
                 </Box>
-                <Chip label={fmtTime(elapsed)} size="small" sx={{ bgcolor: 'rgba(255,81,0,0.08)', color: '#FF5100', fontWeight: 600, fontSize: '0.72rem' }} />
-              </Box>
-              <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
-                <Box sx={{ textAlign: 'left' }}>
-                  <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.venue}</Typography>
-                  <Typography sx={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.95rem', lineHeight: 1.2 }}>{wifiConfig?.venue || 'N/A'}</Typography>
+                <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
+                  <Box sx={{ textAlign: 'left' }}>
+                    <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.status}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4CAF50', boxShadow: '0 0 8px rgba(76,175,80,0.5)' }} />
+                      <Typography sx={{ fontWeight: 600, color: '#4CAF50', fontSize: '0.95rem', lineHeight: 1.2 }}>{t.success.authorized}</Typography>
+                    </Box>
+                  </Box>
+                  <Chip label={fmtTime(elapsed)} size="small" sx={{ bgcolor: 'rgba(255,81,0,0.08)', color: '#FF5100', fontWeight: 600, fontSize: '0.72rem' }} />
                 </Box>
-                <PlaceIcon sx={{ fontSize: 22, color: 'rgba(255,255,255,0.2)' }} />
-              </Box>
-            </Paper>
+                <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, py: 2.5 }}>
+                  <Box sx={{ textAlign: 'left' }}>
+                    <Typography sx={{ color: '#888', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: 0.8, lineHeight: 1, mb: 0.5 }}>{t.success.venue}</Typography>
+                    <Typography sx={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.95rem', lineHeight: 1.2 }}>{wifiConfig?.venue || 'N/A'}</Typography>
+                  </Box>
+                  <PlaceIcon sx={{ fontSize: 22, color: 'rgba(255,255,255,0.2)' }} />
+                </Box>
+              </Paper>
+            </>
           )}
 
           {knowsTConnect === 'no' && (
